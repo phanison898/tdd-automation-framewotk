@@ -7,19 +7,23 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.safari.SafariDriver;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class WebFactory {
 
 	private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
-
+	static long PAGE_LOAD_TIME = 60;
+	static long IMPLICIT_WAIT_TIME = 5;
+	
 	public static void initBrowser(String browser) {
 
 		switch (browser) {
@@ -50,6 +54,7 @@ public class WebFactory {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			break;
 		}
 		initdriver();
 	}
@@ -75,8 +80,12 @@ public class WebFactory {
 		case BrowserType.SAFARI:
 			cap = DesiredCapabilities.safari();
 			break;
+		case BrowserType.HTMLUNIT:
+			cap = DesiredCapabilities.htmlUnit();
+			break;
 		}
 		driver.set(new RemoteWebDriver(url, cap));
+		initdriver();
 	}
 
 	public static WebDriver getDriver() {
@@ -90,8 +99,9 @@ public class WebFactory {
 	private static void initdriver() {
 		getDriver().manage().deleteAllCookies();
 		getDriver().manage().window().maximize();
-		getDriver().manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
-		getDriver().manage().timeouts().pageLoadTimeout(0, TimeUnit.SECONDS);
+		getDriver().manage().timeouts().implicitlyWait(PAGE_LOAD_TIME, TimeUnit.SECONDS);
+		getDriver().manage().timeouts().pageLoadTimeout(IMPLICIT_WAIT_TIME, TimeUnit.SECONDS);
+		getDriver().get("http://www.google.com");
 	}
 
 	private static void Chrome() {
@@ -116,8 +126,8 @@ public class WebFactory {
 
 	private static void Safari() {
 		try {
-			throw new Exception("NoSafariBrowserFoundException");
-		} catch (Exception e) {
+		driver.set(new SafariDriver());
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -128,6 +138,7 @@ public class WebFactory {
 	}
 
 	private static void HtmlUnit() {
+		driver.set(new HtmlUnitDriver());
 	}
 
 }

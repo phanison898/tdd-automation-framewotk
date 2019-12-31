@@ -1,10 +1,9 @@
 package com.phani.aut.base;
 
 import org.openqa.selenium.remote.BrowserType;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-public class Testing {
+public class Testing extends WebFactory{
 	
 	
 	@Test

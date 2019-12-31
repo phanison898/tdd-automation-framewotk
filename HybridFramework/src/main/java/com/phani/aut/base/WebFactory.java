@@ -1,6 +1,11 @@
 package com.phani.aut.base;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebDriver;
@@ -11,7 +16,6 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.BrowserType;
-import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
@@ -21,9 +25,27 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 public class WebFactory {
 
 	private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
-	static long PAGE_LOAD_TIME = 60;
-	static long IMPLICIT_WAIT_TIME = 5;
+	private static long PAGE_LOAD_TIME = 60;
+	private static long IMPLICIT_WAIT = 5;
 	
+	public static Properties config;
+	
+	public WebFactory() {
+		config = new Properties();
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(System.getProperty("user.dir") + "/src/main/java/com/phani/aut/config/config.properties");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}try {
+			config.load(fis);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public static void initBrowser(String browser) {
 
 		switch (browser) {
@@ -100,8 +122,8 @@ public class WebFactory {
 		getDriver().manage().deleteAllCookies();
 		getDriver().manage().window().maximize();
 		getDriver().manage().timeouts().implicitlyWait(PAGE_LOAD_TIME, TimeUnit.SECONDS);
-		getDriver().manage().timeouts().pageLoadTimeout(IMPLICIT_WAIT_TIME, TimeUnit.SECONDS);
-		getDriver().get("http://www.google.com");
+		getDriver().manage().timeouts().pageLoadTimeout(IMPLICIT_WAIT, TimeUnit.SECONDS);
+		
 	}
 
 	private static void Chrome() {
@@ -126,8 +148,8 @@ public class WebFactory {
 
 	private static void Safari() {
 		try {
-		driver.set(new SafariDriver());
-		}catch(Exception e) {
+			driver.set(new SafariDriver());
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

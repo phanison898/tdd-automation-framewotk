@@ -3,19 +3,13 @@ package com.phani.aut.base;
 import org.openqa.selenium.remote.BrowserType;
 import org.testng.annotations.Test;
 
-public class Testing extends WebFactory{
-	
-	
+public class Testing {
+
 	@Test
-	public void test(){
+	public void test() throws InterruptedException {
 		WebFactory.initBrowser(BrowserType.CHROME);
-		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Thread.sleep(3000);
 		WebFactory.quitBrowser();
 	}
-
+	
 }

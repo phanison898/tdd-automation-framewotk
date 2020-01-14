@@ -8,9 +8,8 @@ public class Testing {
 
 	@Test
 	public void test1() {
-		System.out.println("Test-1 case started");
+		WebFactory.initBrowser(BrowserType.CHROME);
 		Assert.assertTrue(true);
-		System.out.println("Test-1 case started");
 	}
 	
 	@Test

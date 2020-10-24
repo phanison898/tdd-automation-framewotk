@@ -2,8 +2,8 @@ package com.phani.aut.base;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -12,13 +12,15 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.BrowserType;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -27,6 +29,9 @@ public class WebFactory {
 	private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 	private static long PAGE_LOAD_TIME = 60;
 	private static long IMPLICIT_WAIT = 5;
+	private static String BROWSER= "chrome";
+	private static String BROWSER_URL= "http://www.google.co.in";
+	private static String GRID_URL= "http://52.66.196.189:4444/wd/hub/";
 	
 	public static Properties config;
 	
@@ -35,17 +40,24 @@ public class WebFactory {
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(System.getProperty("user.dir") + "/src/main/java/com/phani/aut/config/config.properties");
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}try {
 			config.load(fis);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	
+	@BeforeTest
+	public void setup() {
+		//initBrowser(BROWSER);
+		initBrowser(BROWSER,GRID_URL);
+	}
+	
+	@AfterTest
+	public void clean() {
+		quitBrowser();
+	}
+	
 	public static void initBrowser(String browser) {
 
 		switch (browser) {
@@ -67,9 +79,6 @@ public class WebFactory {
 		case BrowserType.OPERA:
 			Opera();
 			break;
-		case BrowserType.HTMLUNIT:
-			HtmlUnit();
-			break;
 		default:
 			try {
 				throw new Exception("NoBrowserFoundException");
@@ -81,11 +90,12 @@ public class WebFactory {
 		initdriver();
 	}
 
-	public static void initBrowser(String browser, URL url) {
+	public static void initBrowser(String browser, String grid_url) {
 		DesiredCapabilities cap = null;
 		switch (browser) {
 		case BrowserType.CHROME:
-			cap = DesiredCapabilities.chrome();
+			cap = new DesiredCapabilities();
+			cap.setCapability(CapabilityType.BROWSER_NAME, "chrome");
 			break;
 		case BrowserType.FIREFOX:
 			cap = DesiredCapabilities.firefox();
@@ -106,6 +116,13 @@ public class WebFactory {
 			cap = DesiredCapabilities.htmlUnit();
 			break;
 		}
+		
+		URL url = null;
+		try {
+			url = new URL(grid_url);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 		driver.set(new RemoteWebDriver(url, cap));
 		initdriver();
 	}
@@ -123,7 +140,7 @@ public class WebFactory {
 		getDriver().manage().window().maximize();
 		getDriver().manage().timeouts().implicitlyWait(PAGE_LOAD_TIME, TimeUnit.SECONDS);
 		getDriver().manage().timeouts().pageLoadTimeout(IMPLICIT_WAIT, TimeUnit.SECONDS);
-		
+		getDriver().get(BROWSER_URL);
 	}
 
 	private static void Chrome() {
@@ -158,9 +175,4 @@ public class WebFactory {
 		WebDriverManager.operadriver().setup();
 		driver.set(new OperaDriver());
 	}
-
-	private static void HtmlUnit() {
-		driver.set(new HtmlUnitDriver());
-	}
-
 }

@@ -47,16 +47,12 @@ public class WebFactory {
 	}
 
 	
-	@BeforeTest
-	public void setup() {
-		//initBrowser(BROWSER);
-		initBrowser(BROWSER,GRID_URL);
-	}
-	
-	@AfterTest
-	public void clean() {
-		quitBrowser();
-	}
+	/*
+	 * @BeforeTest public void setup() { //initBrowser(BROWSER);
+	 * initBrowser(BROWSER,GRID_URL); }
+	 * 
+	 * @AfterTest public void clean() { quitBrowser(); }
+	 */
 	
 	public static void initBrowser(String browser) {
 

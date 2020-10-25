@@ -17,7 +17,7 @@ public class Testing extends WebFactory{
 	
 	@Test
 	public void test3() {
-		Assert.assertTrue(true);
+		Assert.assertTrue(false);
 	}
 	
 	@Test

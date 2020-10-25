@@ -31,7 +31,7 @@ public class WebFactory {
 	private static long IMPLICIT_WAIT = 5;
 	private static String BROWSER= "chrome";
 	private static String BROWSER_URL= "http://www.google.co.in";
-	private static String GRID_URL= "http://52.66.196.189:4444/wd/hub/";
+	private static String GRID_URL= "http://52.66.198.56:4444/wd/hub/";
 	
 	public static Properties config;
 	
